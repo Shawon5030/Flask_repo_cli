@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Sentiment & Price Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .chart-container {
+            width: 80%;
+            margin: auto;
+        }
+        table {
+            width: 60%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Crypto Sentiment & Price Analysis</h1>
+
+    <!-- Sentiment Table -->
+    <h2>Market Sentiment</h2>
+    <table>
+        <tr>
+            <th>Crypto</th>
+            <th>Up Votes (%)</th>
+            <th>Down Votes (%)</th>
+        </tr>
+        <tr>
+            <td>Bitcoin (BTC)</td>
+            <td>{{ sentiment_btc.up_votes }}</td>
+            <td>{{ sentiment_btc.down_votes }}</td>
+        </tr>
+        <tr>
+            <td>Ethereum (ETH)</td>
+            <td>{{ sentiment_eth.up_votes }}</td>
+            <td>{{ sentiment_eth.down_votes }}</td>
+        </tr>
+        <tr>
+            <td>Solana (SOL)</td>
+            <td>{{ sentiment_sol.up_votes }}</td>
+            <td>{{ sentiment_sol.down_votes }}</td>
+        </tr>
+    </table>
+
+    <!-- BTC Price Chart -->
+    <h2>Bitcoin (BTC) Price (Last 30 Days)</h2>
+    <div class="chart-container">
+        <canvas id="btcChart"></canvas>
+    </div>
+
+    <!-- ETH Price Chart -->
+    <h2>Ethereum (ETH) Price (Last 30 Days)</h2>
+    <div class="chart-container">
+        <canvas id="ethChart"></canvas>
+    </div>
+
+    <!-- SOL Price Chart -->
+    <h2>Solana (SOL) Price (Last 30 Days)</h2>
+    <div class="chart-container">
+        <canvas id="solChart"></canvas>
+    </div>
+
+    <script>
+        // BTC Chart
+        const btcLabels = {{ btc_data.labels | tojson }};
+        const btcPrices = {{ btc_data.data | tojson }};
+        new Chart(document.getElementById('btcChart'), {
+            type: 'line',
+            data: {
+                labels: btcLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
+                datasets: [{ label: "BTC Price (USD)", data: btcPrices, borderColor: "blue", fill: false }]
+            },
+            options: { responsive: true }
+        });
+
+        // ETH Chart
+        const ethLabels = {{ eth_data.labels | tojson }};
+        const ethPrices = {{ eth_data.data | tojson }};
+        new Chart(document.getElementById('ethChart'), {
+            type: 'line',
+            data: {
+                labels: ethLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
+                datasets: [{ label: "ETH Price (USD)", data: ethPrices, borderColor: "green", fill: false }]
+            },
+            options: { responsive: true }
+        });
+
+        // SOL Chart
+        const solLabels = {{ sol_data.labels | tojson }};
+        const solPrices = {{ sol_data.data | tojson }};
+        new Chart(document.getElementById('solChart'), {
+            type: 'line',
+            data: {
+                labels: solLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
+                datasets: [{ label: "SOL Price (USD)", data: solPrices, borderColor: "orange", fill: false }]
+            },
+            options: { responsive: true }
+        });
+
+        var ctx = document.getElementById('solanaChart').getContext('2d');
+        var solanaChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ sol_data.labels | safe }},
+                datasets: [{
+                    label: 'Solana Price',
+                    data: {{ sol_data.data | safe }},
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        }
+                    },
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
