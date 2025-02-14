@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import logging
 from datetime import datetime, timedelta
 import time
+import numpy as np
 
 # Load API keys
 load_dotenv()
@@ -21,6 +22,21 @@ def get_sentiment(coin_id):
     return {
         "up_votes": data.get("sentiment_votes_up_percentage", 0),
         "down_votes": data.get("sentiment_votes_down_percentage", 0)
+    }
+
+# Calculate Bollinger Bands
+def calculate_bollinger_bands(prices, window=20, num_std_dev=2):
+    prices = np.array(prices)
+    rolling_mean = np.convolve(prices, np.ones(window)/window, mode='valid')
+    rolling_std = np.array([np.std(prices[i-window:i]) for i in range(window, len(prices)+1)])
+    
+    upper_band = rolling_mean + (rolling_std * num_std_dev)
+    lower_band = rolling_mean - (rolling_std * num_std_dev)
+    
+    return {
+        "upper_band": list(upper_band),
+        "lower_band": list(lower_band),
+        "rolling_mean": list(rolling_mean)
     }
 
 # Fetch historical price data from CryptoCompare for the last 30 days
@@ -47,17 +63,21 @@ def get_cmc_data(symbol):
         
         if data["Response"] == "Error":
             logging.error(f"Error fetching data for {symbol}: {data['Message']}")
-            return {"labels": [], "prices": [], "volumes": [], "market_caps": []}
+            return {"labels": [], "prices": [], "volumes": [], "market_caps": [], "bollinger_bands": {}}
+        
+        prices = [item["close"] for item in data["Data"]["Data"]]
+        bollinger_bands = calculate_bollinger_bands(prices)
         
         return {
             "labels": [datetime.utcfromtimestamp(item["time"]).strftime('%Y-%m-%d') for item in data["Data"]["Data"]],
-            "prices": [item["close"] for item in data["Data"]["Data"]],
+            "prices": prices,
             "volumes": [item["volumeto"] for item in data["Data"]["Data"]],
-            "market_caps": [item["close"] * item["volumeto"] for item in data["Data"]["Data"]]  # Simplified market cap calculation
+            "market_caps": [item["close"] * item["volumeto"] for item in data["Data"]["Data"]],  # Simplified market cap calculation
+            "bollinger_bands": bollinger_bands
         }
     except requests.exceptions.RequestException as e:
         logging.error(f"Error fetching data from CryptoCompare: {e}")
-        return {"labels": [], "prices": [], "volumes": [], "market_caps": []}
+        return {"labels": [], "prices": [], "volumes": [], "market_caps": [], "bollinger_bands": {}}
 
 
 @app.route('/')
