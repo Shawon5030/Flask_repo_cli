@@ -92,6 +92,7 @@
             const btcPrices = {{ btc_data.prices | tojson }};
             const btcVolumes = {{ btc_data.volumes | tojson }};
             const btcMarketCaps = {{ btc_data.market_caps | tojson }};
+            const btcBollingerBands = {{ btc_data.bollinger_bands | tojson }};
             new Chart(document.getElementById('btcChart'), {
                 type: 'line',
                 data: {
@@ -99,7 +100,10 @@
                     datasets: [
                         { label: "BTC Price (USD)", data: btcPrices, borderColor: "blue", fill: false },
                         { label: "BTC Volume", data: btcVolumes, borderColor: "red", fill: false },
-                        { label: "BTC Market Cap", data: btcMarketCaps, borderColor: "green", fill: false }
+                        { label: "BTC Market Cap", data: btcMarketCaps, borderColor: "green", fill: false },
+                        { label: "BTC Upper Bollinger Band", data: btcBollingerBands.upper_band, borderColor: "purple", fill: false },
+                        { label: "BTC Lower Bollinger Band", data: btcBollingerBands.lower_band, borderColor: "orange", fill: false },
+                        { label: "BTC Rolling Mean", data: btcBollingerBands.rolling_mean, borderColor: "gray", fill: false }
                     ]
                 },
                 options: { responsive: true }
@@ -110,6 +114,7 @@
             const ethPrices = {{ eth_data.prices | tojson }};
             const ethVolumes = {{ eth_data.volumes | tojson }};
             const ethMarketCaps = {{ eth_data.market_caps | tojson }};
+            const ethBollingerBands = {{ eth_data.bollinger_bands | tojson }};
             new Chart(document.getElementById('ethChart'), {
                 type: 'line',
                 data: {
@@ -117,7 +122,10 @@
                     datasets: [
                         { label: "ETH Price (USD)", data: ethPrices, borderColor: "blue", fill: false },
                         { label: "ETH Volume", data: ethVolumes, borderColor: "red", fill: false },
-                        { label: "ETH Market Cap", data: ethMarketCaps, borderColor: "green", fill: false }
+                        { label: "ETH Market Cap", data: ethMarketCaps, borderColor: "green", fill: false },
+                        { label: "ETH Upper Bollinger Band", data: ethBollingerBands.upper_band, borderColor: "purple", fill: false },
+                        { label: "ETH Lower Bollinger Band", data: ethBollingerBands.lower_band, borderColor: "orange", fill: false },
+                        { label: "ETH Rolling Mean", data: ethBollingerBands.rolling_mean, borderColor: "gray", fill: false }
                     ]
                 },
                 options: { responsive: true }
@@ -128,6 +136,7 @@
             const solPrices = {{ sol_data.prices | tojson }};
             const solVolumes = {{ sol_data.volumes | tojson }};
             const solMarketCaps = {{ sol_data.market_caps | tojson }};
+            const solBollingerBands = {{ sol_data.bollinger_bands | tojson }};
             new Chart(document.getElementById('solChart'), {
                 type: 'line',
                 data: {
@@ -135,7 +144,10 @@
                     datasets: [
                         { label: "SOL Price (USD)", data: solPrices, borderColor: "blue", fill: false },
                         { label: "SOL Volume", data: solVolumes, borderColor: "red", fill: false },
-                        { label: "SOL Market Cap", data: solMarketCaps, borderColor: "green", fill: false }
+                        { label: "SOL Market Cap", data: solMarketCaps, borderColor: "green", fill: false },
+                        { label: "SOL Upper Bollinger Band", data: solBollingerBands.upper_band, borderColor: "purple", fill: false },
+                        { label: "SOL Lower Bollinger Band", data: solBollingerBands.lower_band, borderColor: "orange", fill: false },
+                        { label: "SOL Rolling Mean", data: solBollingerBands.rolling_mean, borderColor: "gray", fill: false }
                     ]
                 },
                 options: { responsive: true }
