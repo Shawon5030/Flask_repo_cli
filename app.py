@@ -2,7 +2,8 @@ from flask import Flask, render_template
 import requests
 from dotenv import load_dotenv
 import logging
-import os
+from datetime import datetime, timedelta
+import time
 
 # Load API keys
 load_dotenv()
@@ -22,18 +23,40 @@ def get_sentiment(coin_id):
         "down_votes": data.get("sentiment_votes_down_percentage", 0)
     }
 
-# Fetch historical price data from CoinGecko
-def get_market_data(coin_id):
-    url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
-    params = {"vs_currency": "usd", "days": 30, "interval": "daily"}
-    response = requests.get(url, params=params)
-    data = response.json()
+# Fetch historical price data from CryptoCompare for the last 30 days
+def get_cmc_data(symbol):
+    url = "https://min-api.cryptocompare.com/data/v2/histoday"
+    headers = {"Authorization": f"Apikey {'8b62eb1979993f425969ddffe34870713442856b07bb94f7faab7feba2b86df8'}"}
     
-    if "prices" in data:
-        labels = [price[0] for price in data["prices"]]
-        prices = [price[1] for price in data["prices"]]
-        return {"labels": labels, "data": prices}
-    return {"labels": [], "data": []}
+    # Calculate the date 30 days ago from today
+    end_date = int(datetime.now().timestamp())  # Current time in Unix timestamp
+    start_date = int((datetime.now() - timedelta(days=30)).timestamp())  # 30 days ago in Unix timestamp
+    
+    params = {
+        "fsym": symbol.upper(),  # Cryptocurrency symbol (e.g., BTC, ETH, SOL)
+        "tsym": "USD",  # Target currency (USD)
+        "limit": 30,  # Number of data points (30 days)
+        "toTs": end_date  # End date for the historical data
+    }
+    
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        data = response.json()
+        
+        if data["Response"] == "Error":
+            logging.error(f"Error fetching data for {symbol}: {data['Message']}")
+            return {"labels": [], "prices": []}
+        
+        return {
+            "labels": [datetime.utcfromtimestamp(item["time"]).strftime('%Y-%m-%d') for item in data["Data"]["Data"]],
+            "prices": [item["close"] for item in data["Data"]["Data"]]
+        }
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error fetching data from CryptoCompare: {e}")
+        return {"labels": [], "prices": []}
+
 
 @app.route('/')
 def home():
@@ -41,9 +64,9 @@ def home():
     sentiment_eth = get_sentiment("ethereum")
     sentiment_sol = get_sentiment("solana")
     
-    btc_data = get_market_data("bitcoin")
-    eth_data = get_market_data("ethereum")
-    sol_data = get_market_data("solana")
+    btc_data = get_cmc_data("BTC")
+    eth_data = get_cmc_data("ETH")
+    sol_data = get_cmc_data("SOL")
     
     # Log the fetched data for debugging
     logging.info(f"BTC Data: {btc_data}")
@@ -59,5 +82,4 @@ def home():
                            sol_data=sol_data)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True)
