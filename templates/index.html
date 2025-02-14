@@ -90,11 +90,17 @@
             // BTC Chart
             const btcLabels = {{ btc_data.labels | tojson }};
             const btcPrices = {{ btc_data.prices | tojson }};
+            const btcVolumes = {{ btc_data.volumes | tojson }};
+            const btcMarketCaps = {{ btc_data.market_caps | tojson }};
             new Chart(document.getElementById('btcChart'), {
                 type: 'line',
                 data: {
                     labels: btcLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
-                    datasets: [{ label: "BTC Price (USD)", data: btcPrices, borderColor: "blue", fill: false }]
+                    datasets: [
+                        { label: "BTC Price (USD)", data: btcPrices, borderColor: "blue", fill: false },
+                        { label: "BTC Volume", data: btcVolumes, borderColor: "red", fill: false },
+                        { label: "BTC Market Cap", data: btcMarketCaps, borderColor: "green", fill: false }
+                    ]
                 },
                 options: { responsive: true }
             });
@@ -102,11 +108,17 @@
             // ETH Chart
             const ethLabels = {{ eth_data.labels | tojson }};
             const ethPrices = {{ eth_data.prices | tojson }};
+            const ethVolumes = {{ eth_data.volumes | tojson }};
+            const ethMarketCaps = {{ eth_data.market_caps | tojson }};
             new Chart(document.getElementById('ethChart'), {
                 type: 'line',
                 data: {
                     labels: ethLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
-                    datasets: [{ label: "ETH Price (USD)", data: ethPrices, borderColor: "green", fill: false }]
+                    datasets: [
+                        { label: "ETH Price (USD)", data: ethPrices, borderColor: "blue", fill: false },
+                        { label: "ETH Volume", data: ethVolumes, borderColor: "red", fill: false },
+                        { label: "ETH Market Cap", data: ethMarketCaps, borderColor: "green", fill: false }
+                    ]
                 },
                 options: { responsive: true }
             });
@@ -114,11 +126,17 @@
             // SOL Chart
             const solLabels = {{ sol_data.labels | tojson }};
             const solPrices = {{ sol_data.prices | tojson }};
+            const solVolumes = {{ sol_data.volumes | tojson }};
+            const solMarketCaps = {{ sol_data.market_caps | tojson }};
             new Chart(document.getElementById('solChart'), {
                 type: 'line',
                 data: {
                     labels: solLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
-                    datasets: [{ label: "SOL Price (USD)", data: solPrices, borderColor: "orange", fill: false }]
+                    datasets: [
+                        { label: "SOL Price (USD)", data: solPrices, borderColor: "blue", fill: false },
+                        { label: "SOL Volume", data: solVolumes, borderColor: "red", fill: false },
+                        { label: "SOL Market Cap", data: solMarketCaps, borderColor: "green", fill: false }
+                    ]
                 },
                 options: { responsive: true }
             });
