@@ -85,67 +85,43 @@
     </div>
 
     <script>
-        // BTC Chart
-        const btcLabels = {{ btc_data.labels | tojson }};
-        const btcPrices = {{ btc_data.data | tojson }};
-        new Chart(document.getElementById('btcChart'), {
-            type: 'line',
-            data: {
-                labels: btcLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
-                datasets: [{ label: "BTC Price (USD)", data: btcPrices, borderColor: "blue", fill: false }]
-            },
-            options: { responsive: true }
-        });
+        // Ensure Chart.js is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // BTC Chart
+            const btcLabels = {{ btc_data.labels | tojson }};
+            const btcPrices = {{ btc_data.prices | tojson }};
+            new Chart(document.getElementById('btcChart'), {
+                type: 'line',
+                data: {
+                    labels: btcLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
+                    datasets: [{ label: "BTC Price (USD)", data: btcPrices, borderColor: "blue", fill: false }]
+                },
+                options: { responsive: true }
+            });
 
-        // ETH Chart
-        const ethLabels = {{ eth_data.labels | tojson }};
-        const ethPrices = {{ eth_data.data | tojson }};
-        new Chart(document.getElementById('ethChart'), {
-            type: 'line',
-            data: {
-                labels: ethLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
-                datasets: [{ label: "ETH Price (USD)", data: ethPrices, borderColor: "green", fill: false }]
-            },
-            options: { responsive: true }
-        });
+            // ETH Chart
+            const ethLabels = {{ eth_data.labels | tojson }};
+            const ethPrices = {{ eth_data.prices | tojson }};
+            new Chart(document.getElementById('ethChart'), {
+                type: 'line',
+                data: {
+                    labels: ethLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
+                    datasets: [{ label: "ETH Price (USD)", data: ethPrices, borderColor: "green", fill: false }]
+                },
+                options: { responsive: true }
+            });
 
-        // SOL Chart
-        const solLabels = {{ sol_data.labels | tojson }};
-        const solPrices = {{ sol_data.data | tojson }};
-        new Chart(document.getElementById('solChart'), {
-            type: 'line',
-            data: {
-                labels: solLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
-                datasets: [{ label: "SOL Price (USD)", data: solPrices, borderColor: "orange", fill: false }]
-            },
-            options: { responsive: true }
-        });
-
-        var ctx = document.getElementById('solanaChart').getContext('2d');
-        var solanaChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ sol_data.labels | safe }},
-                datasets: [{
-                    label: 'Solana Price',
-                    data: {{ sol_data.data | safe }},
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'day'
-                        }
-                    },
-                    y: {
-                        beginAtZero: false
-                    }
-                }
-            }
+            // SOL Chart
+            const solLabels = {{ sol_data.labels | tojson }};
+            const solPrices = {{ sol_data.prices | tojson }};
+            new Chart(document.getElementById('solChart'), {
+                type: 'line',
+                data: {
+                    labels: solLabels.map(timestamp => new Date(timestamp).toLocaleDateString()),
+                    datasets: [{ label: "SOL Price (USD)", data: solPrices, borderColor: "orange", fill: false }]
+                },
+                options: { responsive: true }
+            });
         });
     </script>
 
