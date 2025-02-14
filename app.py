@@ -47,15 +47,17 @@ def get_cmc_data(symbol):
         
         if data["Response"] == "Error":
             logging.error(f"Error fetching data for {symbol}: {data['Message']}")
-            return {"labels": [], "prices": []}
+            return {"labels": [], "prices": [], "volumes": [], "market_caps": []}
         
         return {
             "labels": [datetime.utcfromtimestamp(item["time"]).strftime('%Y-%m-%d') for item in data["Data"]["Data"]],
-            "prices": [item["close"] for item in data["Data"]["Data"]]
+            "prices": [item["close"] for item in data["Data"]["Data"]],
+            "volumes": [item["volumeto"] for item in data["Data"]["Data"]],
+            "market_caps": [item["close"] * item["volumeto"] for item in data["Data"]["Data"]]  # Simplified market cap calculation
         }
     except requests.exceptions.RequestException as e:
         logging.error(f"Error fetching data from CryptoCompare: {e}")
-        return {"labels": [], "prices": []}
+        return {"labels": [], "prices": [], "volumes": [], "market_caps": []}
 
 
 @app.route('/')
